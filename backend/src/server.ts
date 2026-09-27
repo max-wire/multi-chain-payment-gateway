@@ -6,6 +6,7 @@ import morgan from "morgan";
 
 import paymentRoutes from "./routes/paymentRoutes.js";
 import merchantRoutes from "./routes/merchantRoutes.js";
+import transactionRoutes from "./routes/transactionRoutes.js";
 import { errorHandler } from "./middleware/errorHandler.js";
 
 const app = express();
@@ -24,6 +25,7 @@ app.get("/health", (_req, res) => {
 
 app.use("/api/merchants", merchantRoutes);
 app.use("/api/payments", paymentRoutes);
+app.use("/api/transactions", transactionRoutes);
 
 app.use(errorHandler);
 

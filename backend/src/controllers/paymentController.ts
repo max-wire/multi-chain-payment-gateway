@@ -1,9 +1,5 @@
 import { Request, Response, NextFunction } from "express";
-import {
-    createPayment,
-    getPaymentById,
-    getMerchantPayments,
-} from "../services/paymentService.js";
+import { createPayment, getPaymentById, getMerchantPayments } from "../services/paymentService.js";
 import { createPaymentSchema } from "../schemas/paymentSchema.js";
 
 function getParam(value: string | string[] | undefined): string | undefined {
@@ -14,11 +10,7 @@ function getParam(value: string | string[] | undefined): string | undefined {
     return value;
 }
 
-export async function createPaymentController(
-    req: Request,
-    res: Response,
-    next: NextFunction
-) {
+export async function createPaymentController(req: Request, res: Response, next: NextFunction) {
     try {
         const parsed = createPaymentSchema.safeParse(req.body);
 
@@ -42,11 +34,7 @@ export async function createPaymentController(
     }
 }
 
-export async function getPaymentController(
-    req: Request,
-    res: Response,
-    next: NextFunction
-) {
+export async function getPaymentController(req: Request, res: Response, next: NextFunction) {
     try {
         const paymentId = getParam(req.params.paymentId);
 
@@ -80,7 +68,7 @@ export async function getPaymentController(
 export async function getMerchantPaymentsController(
     req: Request,
     res: Response,
-    next: NextFunction
+    next: NextFunction,
 ) {
     try {
         const merchantId = getParam(req.params.merchantId);

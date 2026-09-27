@@ -1,4 +1,4 @@
-import { defineConfig } from "hardhat/config";
+import { configVariable, defineConfig } from "hardhat/config";
 import hardhatToolboxMochaEthers from "@nomicfoundation/hardhat-toolbox-mocha-ethers";
 
 export default defineConfig({
@@ -19,5 +19,14 @@ export default defineConfig({
         tests: "./test",
         cache: "./cache",
         artifacts: "./artifacts",
+    },
+
+    networks: {
+        sepolia: {
+            type: "http",
+            chainId: 11155111,
+            url: configVariable("ETHEREUM_RPC_URL"),
+            accounts: [configVariable("PRIVATE_KEY")],
+        },
     },
 });

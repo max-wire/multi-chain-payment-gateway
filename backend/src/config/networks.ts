@@ -5,6 +5,7 @@ export interface NetworkConfig {
     explorerUrl: string;
     nativeToken: string;
     confirmationRequirement: number;
+    gatewayAddress: string;
     isActive: boolean;
 }
 
@@ -16,6 +17,24 @@ export const NETWORKS: Record<string, NetworkConfig> = {
         explorerUrl: "https://etherscan.io",
         nativeToken: "ETH",
         confirmationRequirement: 12,
+        gatewayAddress: process.env.ETHEREUM_GATEWAY_ADDRESS ?? "",
+        isActive: false,
+    },
+
+    ethereumSepolia: {
+        chainId: 11155111,
+        name: "Ethereum Sepolia",
+        rpcUrl:
+            process.env.ETHEREUM_SEPOLIA_RPC_URL ??
+            process.env.ETHEREUM_RPC_URL ??
+            "",
+        explorerUrl: "https://sepolia.etherscan.io",
+        nativeToken: "ETH",
+        confirmationRequirement: 3,
+        gatewayAddress:
+            process.env.ETHEREUM_SEPOLIA_GATEWAY_ADDRESS ??
+            process.env.ETHEREUM_GATEWAY_ADDRESS ??
+            "",
         isActive: true,
     },
 
@@ -26,6 +45,7 @@ export const NETWORKS: Record<string, NetworkConfig> = {
         explorerUrl: "https://bscscan.com",
         nativeToken: "BNB",
         confirmationRequirement: 15,
+        gatewayAddress: process.env.BNB_GATEWAY_ADDRESS ?? "",
         isActive: true,
     },
 
@@ -36,6 +56,7 @@ export const NETWORKS: Record<string, NetworkConfig> = {
         explorerUrl: "https://polygonscan.com",
         nativeToken: "POL",
         confirmationRequirement: 20,
+        gatewayAddress: process.env.POLYGON_GATEWAY_ADDRESS ?? "",
         isActive: true,
     },
 
@@ -45,11 +66,19 @@ export const NETWORKS: Record<string, NetworkConfig> = {
         rpcUrl: process.env.SECURECHAIN_RPC_URL ?? "",
         explorerUrl: "https://explorer.securechain.ai",
         nativeToken: "SCAI",
-        confirmationRequirement: Number(process.env.SECURECHAIN_CONFIRMATIONS ?? 12),
+        confirmationRequirement: Number(
+            process.env.SECURECHAIN_CONFIRMATIONS ?? 12,
+        ),
+        gatewayAddress:
+            process.env.SECURECHAIN_GATEWAY_ADDRESS ?? "",
         isActive: true,
     },
 };
 
-export function getNetworkByChainId(chainId: number): NetworkConfig | undefined {
-    return Object.values(NETWORKS).find((network) => network.chainId === chainId);
+export function getNetworkByChainId(
+    chainId: number,
+): NetworkConfig | undefined {
+    return Object.values(NETWORKS).find(
+        (network) => network.chainId === chainId,
+    );
 }

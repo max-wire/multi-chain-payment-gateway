@@ -8,3 +8,5 @@ coverage/
 typechain-types/
 dist/
 .DS_Store
+
+types/

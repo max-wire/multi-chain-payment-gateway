@@ -1,8 +1,5 @@
 import { Request, Response, NextFunction } from "express";
-import {
-    createMerchant,
-    getMerchantById,
-} from "../services/merchantService.js";
+import { createMerchant, getMerchantById } from "../services/merchantService.js";
 import { createMerchantSchema } from "../schemas/merchantSchema.js";
 
 function getParam(value: string | string[] | undefined): string | undefined {
@@ -13,11 +10,7 @@ function getParam(value: string | string[] | undefined): string | undefined {
     return value;
 }
 
-export async function createMerchantController(
-    req: Request,
-    res: Response,
-    next: NextFunction
-) {
+export async function createMerchantController(req: Request, res: Response, next: NextFunction) {
     try {
         const parsed = createMerchantSchema.safeParse(req.body);
 
@@ -41,11 +34,7 @@ export async function createMerchantController(
     }
 }
 
-export async function getMerchantController(
-    req: Request,
-    res: Response,
-    next: NextFunction
-) {
+export async function getMerchantController(req: Request, res: Response, next: NextFunction) {
     try {
         const merchantId = getParam(req.params.merchantId);
 

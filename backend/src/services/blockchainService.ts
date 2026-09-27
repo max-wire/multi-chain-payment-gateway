@@ -1,15 +1,10 @@
 import { ethers } from "ethers";
 
-import {
-    NETWORKS,
-    type NetworkConfig,
-} from "../config/networks.js";
+import { NETWORKS, type NetworkConfig } from "../config/networks.js";
 
 const providers = new Map<number, ethers.JsonRpcProvider>();
 
-export function getProvider(
-    chainId: number,
-): ethers.JsonRpcProvider {
+export function getProvider(chainId: number): ethers.JsonRpcProvider {
     const network = getNetwork(chainId);
 
     if (!network) {
@@ -17,9 +12,7 @@ export function getProvider(
     }
 
     if (!network.rpcUrl) {
-        throw new Error(
-            `RPC URL is not configured for ${network.name}`,
-        );
+        throw new Error(`RPC URL is not configured for ${network.name}`);
     }
 
     const existingProvider = providers.get(chainId);
@@ -28,27 +21,18 @@ export function getProvider(
         return existingProvider;
     }
 
-    const provider = new ethers.JsonRpcProvider(
-        network.rpcUrl,
-        network.chainId,
-    );
+    const provider = new ethers.JsonRpcProvider(network.rpcUrl, network.chainId);
 
     providers.set(chainId, provider);
 
     return provider;
 }
 
-export function getNetwork(
-    chainId: number,
-): NetworkConfig | undefined {
-    return Object.values(NETWORKS).find(
-        (network) => network.chainId === chainId,
-    );
+export function getNetwork(chainId: number): NetworkConfig | undefined {
+    return Object.values(NETWORKS).find((network) => network.chainId === chainId);
 }
 
-export async function getCurrentBlock(
-    chainId: number,
-): Promise<number> {
+export async function getCurrentBlock(chainId: number): Promise<number> {
     const provider = getProvider(chainId);
 
     return provider.getBlockNumber();
@@ -72,10 +56,7 @@ export async function getTransactionReceipt(
     return provider.getTransactionReceipt(txHash);
 }
 
-export async function getConfirmations(
-    chainId: number,
-    txHash: string,
-): Promise<number> {
+export async function getConfirmations(chainId: number, txHash: string): Promise<number> {
     const provider = getProvider(chainId);
 
     const transaction = await provider.getTransaction(txHash);
@@ -90,8 +71,5 @@ export async function getConfirmations(
         return 0;
     }
 
-    return Math.max(
-        0,
-        currentBlock - transaction.blockNumber + 1,
-    );
+    return Math.max(0, currentBlock - transaction.blockNumber + 1);
 }
