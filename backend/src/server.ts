@@ -19,6 +19,7 @@ app.use(
             "http://localhost:5173",
             "https://frontend-ten-ecru-19.vercel.app",
             "https://multi-chain-payment-gateway-c75g8gfyi-wire4.vercel.app",
+            "https://multi-chain-payment-gateway-blvrnmb9l-wire4.vercel.app",
         ],
     }),
 );
