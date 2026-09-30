@@ -230,14 +230,27 @@ cd backend
 npm run build
 Deployment
 
-Deployment targets:
+The project has been deployed using separate frontend and backend services.
 
-Frontend: Vercel
-Backend: Render or Railway
-Database: PostgreSQL
-Blockchain: Ethereum Sepolia
+Frontend:
+Vercel
+https://frontend-ten-ecru-19.vercel.app
 
-Production deployment details will be added after deployment.
+Backend:
+Render
+https://multi-chain-payment-gateway.onrender.com
+
+Database:
+PostgreSQL
+
+Blockchain:
+Ethereum Sepolia
+
+Ethereum Sepolia is the active and tested payment network for the current MVP.
+
+The frontend communicates with the production backend through the deployed API.
+
+Ethereum mainnet, BNB Chain, Polygon, and SecureChain are configured in the network architecture but remain inactive until their respective RPC and gateway configurations are deployed.
 
 Project Status
 Completed
