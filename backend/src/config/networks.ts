@@ -24,10 +24,7 @@ export const NETWORKS: Record<string, NetworkConfig> = {
     ethereumSepolia: {
         chainId: 11155111,
         name: "Ethereum Sepolia",
-        rpcUrl:
-            process.env.ETHEREUM_SEPOLIA_RPC_URL ??
-            process.env.ETHEREUM_RPC_URL ??
-            "",
+        rpcUrl: process.env.ETHEREUM_SEPOLIA_RPC_URL ?? process.env.ETHEREUM_RPC_URL ?? "",
         explorerUrl: "https://sepolia.etherscan.io",
         nativeToken: "ETH",
         confirmationRequirement: 3,
@@ -46,7 +43,7 @@ export const NETWORKS: Record<string, NetworkConfig> = {
         nativeToken: "BNB",
         confirmationRequirement: 15,
         gatewayAddress: process.env.BNB_GATEWAY_ADDRESS ?? "",
-        isActive: true,
+        isActive: false,
     },
 
     polygon: {
@@ -57,7 +54,7 @@ export const NETWORKS: Record<string, NetworkConfig> = {
         nativeToken: "POL",
         confirmationRequirement: 20,
         gatewayAddress: process.env.POLYGON_GATEWAY_ADDRESS ?? "",
-        isActive: true,
+        isActive: false,
     },
 
     securechain: {
@@ -66,19 +63,12 @@ export const NETWORKS: Record<string, NetworkConfig> = {
         rpcUrl: process.env.SECURECHAIN_RPC_URL ?? "",
         explorerUrl: "https://explorer.securechain.ai",
         nativeToken: "SCAI",
-        confirmationRequirement: Number(
-            process.env.SECURECHAIN_CONFIRMATIONS ?? 12,
-        ),
-        gatewayAddress:
-            process.env.SECURECHAIN_GATEWAY_ADDRESS ?? "",
-        isActive: true,
+        confirmationRequirement: Number(process.env.SECURECHAIN_CONFIRMATIONS ?? 12),
+        gatewayAddress: process.env.SECURECHAIN_GATEWAY_ADDRESS ?? "",
+        isActive: false,
     },
 };
 
-export function getNetworkByChainId(
-    chainId: number,
-): NetworkConfig | undefined {
-    return Object.values(NETWORKS).find(
-        (network) => network.chainId === chainId,
-    );
+export function getNetworkByChainId(chainId: number): NetworkConfig | undefined {
+    return Object.values(NETWORKS).find((network) => network.chainId === chainId);
 }

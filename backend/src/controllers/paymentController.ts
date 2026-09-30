@@ -10,6 +10,10 @@ function getParam(value: string | string[] | undefined): string | undefined {
     return value;
 }
 
+function serializeBigInt<T>(value: T): T {
+    return JSON.parse(JSON.stringify(value, (_, v) => (typeof v === "bigint" ? v.toString() : v)));
+}
+
 export async function createPaymentController(req: Request, res: Response, next: NextFunction) {
     try {
         const parsed = createPaymentSchema.safeParse(req.body);
@@ -27,7 +31,7 @@ export async function createPaymentController(req: Request, res: Response, next:
 
         res.status(201).json({
             success: true,
-            data: payment,
+            data: serializeBigInt(payment),
         });
     } catch (error) {
         next(error);
@@ -58,7 +62,7 @@ export async function getPaymentController(req: Request, res: Response, next: Ne
 
         res.status(200).json({
             success: true,
-            data: payment,
+            data: serializeBigInt(payment),
         });
     } catch (error) {
         next(error);
@@ -85,7 +89,7 @@ export async function getMerchantPaymentsController(
 
         res.status(200).json({
             success: true,
-            data: payments,
+            data: serializeBigInt(payments),
         });
     } catch (error) {
         next(error);

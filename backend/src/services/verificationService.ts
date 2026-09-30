@@ -36,67 +36,33 @@ export async function verifyPayment(input: VerifyPaymentInput) {
     });
 
     if (!payment) {
-        throw new VerificationError(
-            "Payment not found",
-            404,
-        );
+        throw new VerificationError("Payment not found", 404);
     }
 
     const network = getNetwork(input.chainId);
 
     if (!network || !network.isActive) {
-        throw new VerificationError(
-            `Unsupported or inactive network: ${input.chainId}`,
-            400,
-        );
+        throw new VerificationError(`Unsupported or inactive network: ${input.chainId}`, 400);
     }
 
-    const transaction = await getTransaction(
-        input.chainId,
-        input.txHash,
-    );
+    const transaction = await getTransaction(input.chainId, input.txHash);
 
     if (!transaction) {
-        throw new VerificationError(
-            "Blockchain transaction not found",
-            400,
-        );
+        throw new VerificationError("Blockchain transaction not found", 400);
     }
 
-    const receipt = await getTransactionReceipt(
-        input.chainId,
-        input.txHash,
-    );
+    const receipt = await getTransactionReceipt(input.chainId, input.txHash);
 
     if (!receipt) {
-        throw new VerificationError(
-            "Transaction receipt not available",
-            400,
-        );
+        throw new VerificationError("Transaction receipt not available", 400);
     }
 
     if (receipt.status !== 1) {
-        throw new VerificationError(
-            "Blockchain transaction failed",
-            400,
-        );
+        throw new VerificationError("Blockchain transaction failed", 400);
     }
 
     if (!transaction.to) {
-        throw new VerificationError(
-            "Transaction has no recipient",
-            400,
-        );
-    }
-
-    if (
-        transaction.to.toLowerCase() !==
-        network.gatewayAddress.toLowerCase()
-    ) {
-        throw new VerificationError(
-            "Transaction was not sent to the PaymentGateway",
-            400,
-        );
+        throw new VerificationError("Transaction has no recipient", 400);
     }
 
     const iface = new ethers.Interface(PAYMENT_GATEWAY_ABI);
@@ -112,6 +78,10 @@ export async function verifyPayment(input: VerifyPaymentInput) {
         | undefined;
 
     for (const log of receipt.logs) {
+        if (log.address.toLowerCase() !== network.gatewayAddress.toLowerCase()) {
+            continue;
+        }
+
         try {
             const parsed = iface.parseLog({
                 topics: log.topics as string[],
@@ -137,67 +107,32 @@ export async function verifyPayment(input: VerifyPaymentInput) {
     }
 
     if (!paymentReceived) {
-        throw new VerificationError(
-            "PaymentReceived event not found in transaction",
-            400,
-        );
+        throw new VerificationError("PaymentReceived event not found in transaction", 400);
     }
 
-    if (
-        paymentReceived.paymentId.toLowerCase() !==
-        payment.paymentId.toLowerCase()
-    ) {
-        throw new VerificationError(
-            "Payment ID does not match",
-            400,
-        );
+    if (paymentReceived.paymentId.toLowerCase() !== payment.paymentId.toLowerCase()) {
+        throw new VerificationError("Payment ID does not match", 400);
     }
 
-    if (
-        paymentReceived.merchant.toLowerCase() !==
-        payment.recipientAddress.toLowerCase()
-    ) {
-        throw new VerificationError(
-            "Merchant address does not match",
-            400,
-        );
+    if (paymentReceived.merchant.toLowerCase() !== payment.recipientAddress.toLowerCase()) {
+        throw new VerificationError("Merchant address does not match", 400);
     }
 
-    if (
-        paymentReceived.token.toLowerCase() !==
-        payment.tokenAddress.toLowerCase()
-    ) {
-        throw new VerificationError(
-            "Token address does not match",
-            400,
-        );
+    if (paymentReceived.token.toLowerCase() !== payment.tokenAddress.toLowerCase()) {
+        throw new VerificationError("Token address does not match", 400);
     }
 
-    if (
-        paymentReceived.amount.toString() !==
-        payment.amount
-    ) {
-        throw new VerificationError(
-            "Payment amount does not match",
-            400,
-        );
+    if (paymentReceived.amount.toString() !== payment.amount) {
+        throw new VerificationError("Payment amount does not match", 400);
     }
 
-    const confirmations = await getConfirmations(
-        input.chainId,
-        input.txHash,
-    );
+    const confirmations = await getConfirmations(input.chainId, input.txHash);
 
-    const isConfirmed =
-        confirmations >= network.confirmationRequirement;
+    const isConfirmed = confirmations >= network.confirmationRequirement;
 
-    const transactionStatus = isConfirmed
-        ? "CONFIRMED"
-        : "DETECTED";
+    const transactionStatus = isConfirmed ? "CONFIRMED" : "DETECTED";
 
-    const paymentStatus = isConfirmed
-        ? "CONFIRMED"
-        : "VERIFYING";
+    const paymentStatus = isConfirmed ? "CONFIRMED" : "VERIFYING";
 
     const transactionRecord = await prisma.transaction.upsert({
         where: {
@@ -214,19 +149,13 @@ export async function verifyPayment(input: VerifyPaymentInput) {
             recipientAddress: paymentReceived.merchant,
             tokenAddress: paymentReceived.token,
             amount: paymentReceived.amount.toString(),
-            blockNumber:
-                receipt.blockNumber !== null
-                    ? BigInt(receipt.blockNumber)
-                    : null,
+            blockNumber: receipt.blockNumber !== null ? BigInt(receipt.blockNumber) : null,
             confirmations,
             status: transactionStatus,
         },
         update: {
             confirmations,
-            blockNumber:
-                receipt.blockNumber !== null
-                    ? BigInt(receipt.blockNumber)
-                    : undefined,
+            blockNumber: receipt.blockNumber !== null ? BigInt(receipt.blockNumber) : undefined,
             status: transactionStatus,
         },
     });
@@ -244,7 +173,6 @@ export async function verifyPayment(input: VerifyPaymentInput) {
         transaction: transactionRecord,
         paymentStatus,
         confirmations,
-        requiredConfirmations:
-            network.confirmationRequirement,
+        requiredConfirmations: network.confirmationRequirement,
     };
 }

@@ -7,12 +7,17 @@ import morgan from "morgan";
 import paymentRoutes from "./routes/paymentRoutes.js";
 import merchantRoutes from "./routes/merchantRoutes.js";
 import transactionRoutes from "./routes/transactionRoutes.js";
+import invoiceRoutes from "./routes/invoiceRoutes.js";
 import { errorHandler } from "./middleware/errorHandler.js";
 
 const app = express();
 
 app.use(helmet());
-app.use(cors());
+app.use(
+    cors({
+        origin: "http://localhost:5173",
+    }),
+);
 app.use(express.json());
 app.use(morgan("dev"));
 
@@ -26,6 +31,7 @@ app.get("/health", (_req, res) => {
 app.use("/api/merchants", merchantRoutes);
 app.use("/api/payments", paymentRoutes);
 app.use("/api/transactions", transactionRoutes);
+app.use("/api/invoices", invoiceRoutes);
 
 app.use(errorHandler);
 
